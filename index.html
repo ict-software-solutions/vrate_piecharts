@@ -1,0 +1,331 @@
+<html>
+<head>
+    <title>   chart </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</head>
+<style>
+    .table
+    {
+        border: none;
+    }
+    .card-body
+    {
+        flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem 0;
+    }
+    .card{
+        padding: 1.25rem;
+    }
+
+</style>
+
+<body>
+    <div class="container">
+    <br></br>
+        <div class="row">
+                 <div class="col-md-6">
+                    <div class="card">
+                     <div class="card-title">
+                <div class="row">
+
+                    <div class="col-md-6" >Top Sites Visited</div>
+                    <div class="col-md-6" style="text-align: right;">
+                     <div class="dropdown">
+                    <button class="  dropdown-toggle" type="button" data-toggle="dropdown" style="outline:none;border:unset;background-color: unset;">This Week</button>
+     
+                      <ul class="dropdown-menu" style="border:none;">
+
+                        <li><a href="#" style=" color: black;margin-left: 8px;">This Month</a></li>
+                         <li><a href="#" style=" color: black; margin-left: 8px;">This Year</a></li>
+    
+                      </ul>
+                         </div>
+                         </div>
+                                 </div>
+               
+            
+                 </div>
+
+                <div class="card-body">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Sites</th>
+                        <th style="text-align: right;">Hours Spent</th>
+                      
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td id="top_visited_domain_1">google.com</td>
+                        <td id="top_visited_hours_1" style="text-align: right;"></td>
+                  
+                      </tr>
+                      <tr>
+                        <td id="top_visited_domain_2">facebook.com</td>
+                        <td id="top_visited_hours_2" style="text-align: right;"></td>
+                     
+                      </tr>
+                      <tr>
+                        <td id="top_visited_domain_3">youtube.com</td>
+                        <td id="top_visited_hours_3" style="text-align: right;"></td>
+                     
+                      </tr>
+                      
+                     </tbody>
+</table>
+<p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
+<div class="row" style="width: 100%;height:350px ;">
+<div class="col-md-12" style="text-align: center;">
+    <div id="donutchart" ></div>
+</div>
+</div>
+
+            </div>
+          </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-title">
+               
+                <div class="row">
+
+<div class="col-md-6" >Top Sites Blocked</div>
+<div class="col-md-6" style="text-align: right;">
+    <div class="dropdown">
+        <button class="  dropdown-toggle" type="button" data-toggle="dropdown" style="outline:none;border:unset;background-color: unset;">This Week
+       </button>
+        <ul class="dropdown-menu" style="border:none;">
+          <li><a href="#" style=" color: black;
+            margin-left: 8px;">This Month</a></li>
+          <li><a href="#" style=" color: black;
+            margin-left: 8px;">This Year</a></li>
+    
+        </ul>
+      </div>
+</div>
+                </div>
+               
+            
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Sites</th>
+                        <th style="text-align: right;">Total visit</th>
+                      
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td id = "blocked_domain_1">google.com </td>
+                        <td id="top_blocked_hours_1" style="text-align: right;">350</td>
+                  
+                      </tr>
+                      <tr>
+                        <td id = "blocked_domain_2">facebook.com</td>
+                        <td id="top_blocked_hours_2" style="text-align: right;">765</td>
+                     
+                      </tr>
+                      <tr>
+                        <td id = "blocked_domain_3">youtube.com</td>
+                        <td id="top_blocked_hours_3" style="text-align: right;">765</td>
+                     
+                      </tr>
+                      
+                     </tbody>
+                     </table>
+<p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
+<div class="row" style="width: 100%;height:350px ;">
+<div class="col-md-12" style="text-align: center;">
+ 
+    <div id="donutchart2" ></div>
+</div>
+</div>
+
+            </div>
+          </div>
+    </div>
+</div>
+    </div>
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="reportdata.json"></script>
+<script type="text/javascript">
+// Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart() {
+
+      
+var reportdata;  
+var mappeddata;
+var top_visited_array = [];
+var array_hours =[];
+var array_block_hours =[];
+const map = new Map();
+const visited_map = new Map();
+var jsonData = fetch("reportdata.json").then(function(resp){
+  return resp.json();
+}).then(function(data){
+  reportdata = data;
+  
+  
+  var dataMapReqd = transformToMap(reportdata);
+  console.log('domain map is', dataMapReqd);
+  var data_array = [...dataMapReqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
+  console.log('sortedData, ', data_array);
+  var topFivedata = data_array.slice(0,5);
+  var top_visited_hours = hoursvisited(reportdata);
+  console.log('top hours visited',top_visited_hours);
+  var top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
+  console.log('visited array',top_visited_array);
+  for(i=0; i<topFivedata.length; i++){
+      for(j=0;j<top_visited_array.length;j++){
+          if(topFivedata[i][0] == top_visited_array[j][0]){
+            array_hours.push([topFivedata[i][0],top_visited_array[j][1]]);
+          }
+      }
+  }
+  console.log(array_hours);
+
+  var blockedmapreqd = blockedsitemap(reportdata); 
+  console.log('Blocked data Map', blockedmapreqd); 
+  var blocked_array = [...blockedmapreqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
+  console.log('Blocked Data Array', blocked_array);
+  var topblockedsite = blocked_array.slice(0,5);
+  for(i=0; i<topblockedsite.length; i++){
+      for(j=0;j<top_visited_array.length;j++){
+          if(topblockedsite[i][0] == top_visited_array[j][0]){
+            array_block_hours.push([topblockedsite[i][0],top_visited_array[j][1]]);
+          }
+      }
+  }
+  console.log(array_block_hours);
+  
+  
+
+
+  var data = new google.visualization.DataTable();
+  var data2 = new google.visualization.DataTable();
+    
+    data.addColumn('string','Domain');
+    data.addColumn('number','visits');
+    data.addRows(topFivedata);
+    document.getElementById("top_visited_domain_1").innerHTML = topFivedata[0][0];
+    document.getElementById("top_visited_domain_2").innerHTML = topFivedata[1][0];
+    document.getElementById("top_visited_domain_3").innerHTML = topFivedata[2][0];
+    document.getElementById("top_visited_hours_1").innerHTML = array_hours[0][1];
+    document.getElementById("top_visited_hours_2").innerHTML = array_hours[1][1];
+    document.getElementById("top_visited_hours_3").innerHTML = array_hours[2][1];
+
+    data2.addColumn('string','Doamin');
+    data2.addColumn('number', 'block_rate');
+    data2.addRows(topblockedsite);
+    document.getElementById("blocked_domain_1").innerHTML = topblockedsite[0][0];
+    document.getElementById("blocked_domain_2").innerHTML = topblockedsite[1][0];
+    document.getElementById("blocked_domain_3").innerHTML = topblockedsite[2][0];
+    document.getElementById("top_blocked_hours_1").innerHTML = array_block_hours[0][1];
+    document.getElementById("top_blocked_hours_2").innerHTML = array_block_hours[1][1];
+    document.getElementById("top_blocked_hours_3").innerHTML = array_block_hours[2][1];
+    
+    var options = {
+      title: "Most visited sites : ",
+      pieHole: 0.4,
+      legend : {
+      position : 'labeled',
+      alignment : 'end',
+      },
+     enableInteractivity : false
+     };
+
+     var chart = new google.visualization.PieChart(document.getElementById('donutchart'));  
+     chart.draw(data, options);
+     
+
+     var options2 = {
+      title: "Blocked sites : ",
+      pieHole: 0.4,
+      legend : {
+      position : 'labeled',
+      alignment : 'end',
+      },
+     enableInteractivity : false
+     };
+
+     var chart = new google.visualization.PieChart(document.getElementById('donutchart2'));  
+     chart.draw(data2, options2);
+    
+     
+    
+     
+    
+})
+
+}
+
+
+// Instantiate and draw our chart, passing in some options
+
+function blockedsitemap(data){
+    var returnMap = new Map();
+
+    data.forEach((element)=>{
+       if(!returnMap.get(element.all_dom_checks)){
+           returnMap.set(element.domain,element.all_dom_checks);
+       }
+       else{
+           returnMap.set(element.domain, Number(returnMap.get(element.domain)+element.all_dom_checks))
+       }
+    })
+
+    return returnMap;
+}
+
+function transformToMap(data) {
+
+var returnMap =  new Map();
+
+data.forEach((element) => {
+if(!returnMap.get(element.domain)){
+returnMap.set(element.domain, element.visits);
+} else {
+returnMap.set(element.domain, Number(returnMap.get(element.domain))+element.visits)
+}
+})
+
+return returnMap;
+
+
+}
+
+function hoursvisited(data){
+    var returnMap = new Map();
+
+    data.forEach((element)=>{
+       if(!returnMap.get(element.v_span_hr)){
+           returnMap.set(element.domain,element.v_span_hr);
+       }
+       else{
+           returnMap.set(element.domain, Number(returnMap.get(element.domain)+element.v_span_hr))
+       }
+    })
+
+    return returnMap;
+}
+
+
+</script>
+</body>
+</html>
