@@ -4,27 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="reportdata.json"></script>
+        <script type="text/javascript" src="app.js"></script>
 
 </head>
-<style>
-    .table
-    {
-        border: none;
-    }
-    .card-body
-    {
-        flex: 1 1 auto;
-    min-height: 1px;
-    padding: 1.25rem 0;
-    }
-    .card{
-        padding: 1.25rem;
-    }
-
-</style>
 
 <body>
     <div class="container">
@@ -54,7 +42,8 @@
                  </div>
 
                 <div class="card-body">
-                <table class="table">
+                    <div class="table" id="divtable"></div>
+                <!--<table class="table">
                     <thead>
                       <tr>
                         <th>Sites</th>
@@ -91,7 +80,7 @@
                       </tr>
                       
                      </tbody>
-</table>
+</table>-->
 <p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
 <div class="row" style="width: 100%;height:350px ;">
 <div class="col-md-12" style="text-align: center;">
@@ -127,7 +116,8 @@
             
             </div>
             <div class="card-body">
-                <table class="table">
+                <div class="table" id="divtable2"></div>
+                <!--<table class="table">
                     <thead>
                       <tr>
                         <th>Sites</th>
@@ -164,7 +154,7 @@
                       </tr>
                       
                      </tbody>
-                     </table>
+                     </table>-->
 <p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
 <div class="row" style="width: 100%;height:350px ;">
 <div class="col-md-12" style="text-align: center;">
@@ -179,166 +169,5 @@
 </div>
     </div>
 
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="reportdata.json"></script>
-<script type="text/javascript">
-// Load google charts
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-// Draw the chart and set the chart values
-function drawChart() {
-
-      
-var reportdata;  
-var mappeddata;
-var top_visited_array = [];
-var array_hours =[];
-var array_block_hours =[];
-const map = new Map();
-const visited_map = new Map();
-var jsonData = fetch("reportdata.json").then(function(resp){
-  return resp.json();
-}).then(function(data){
-  reportdata = data;
-  
-  
-  var dataMapReqd = transformToMap(reportdata);
-  var data_array = [...dataMapReqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-  var topFivedata = data_array.slice(0,5);
-  var top_visited_hours = hoursvisited(reportdata);
- 
-  var top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
- 
-  for(i=0; i<topFivedata.length; i++){
-      for(j=0;j<top_visited_array.length;j++){
-          if(topFivedata[i][0] == top_visited_array[j][0]){
-            array_hours.push([topFivedata[i][0],top_visited_array[j][1]]);
-          }
-      }
-  }
- ;
-
-  var blockedmapreqd = blockedsitemap(reportdata); 
- 
-  var blocked_array = [...blockedmapreqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-  
-  var topblockedsite = blocked_array.slice(0,5);
-  for(i=0; i<topblockedsite.length; i++){
-      for(j=0;j<top_visited_array.length;j++){
-          if(topblockedsite[i][0] == top_visited_array[j][0]){
-            array_block_hours.push([topblockedsite[i][0],top_visited_array[j][1]]);
-          }
-      }
-  }
-
-  
-  var data = new google.visualization.DataTable();
-  var data2 = new google.visualization.DataTable();
-    
-    data.addColumn('string','Domain');
-    data.addColumn('number','visits');
-    data.addRows(topFivedata);
-   for(value =1 ; value < 6; value ++){
-      document.getElementById("top_visited_domain_" + value).innerHTML = topFivedata[value-1][0];
-      document.getElementById("top_visited_hours_" + value).innerHTML = array_hours[value-1][1];
-    }
-
-    data2.addColumn('string','Doamin');
-    data2.addColumn('number', 'block_rate');
-    data2.addRows(topblockedsite);
-   for(value =1 ; value < 6; value ++){
-      document.getElementById("blocked_domain_" + value).innerHTML = topblockedsite[value-1][0];
-      document.getElementById("top_blocked_hours_" + value).innerHTML = array_block_hours[value-1][1];
-    }
-    
-    var options = {
-      title: "Most visited sites : ",
-      pieHole: 0.4,
-      legend : {
-      position : 'labeled',
-      alignment : 'end',
-      },
-     enableInteractivity : false
-     };
-
-     var chart = new google.visualization.PieChart(document.getElementById('donutchart'));  
-     chart.draw(data, options);
-     
-
-     var options2 = {
-      title: "Blocked sites : ",
-      pieHole: 0.4,
-      legend : {
-      position : 'labeled',
-      alignment : 'end',
-      },
-     enableInteractivity : false
-     };
-
-     var chart = new google.visualization.PieChart(document.getElementById('donutchart2'));  
-     chart.draw(data2, options2);
-    
-     
-    
-     
-    
-})
-
-}
-
-
-// Instantiate and draw our chart, passing in some options
-
-function blockedsitemap(data){
-    var returnMap = new Map();
-
-    data.forEach((element)=>{
-       if(!returnMap.get(element.all_dom_checks)){
-           returnMap.set(element.domain,element.all_dom_checks);
-       }
-       else{
-           returnMap.set(element.domain, Number(returnMap.get(element.domain)+element.all_dom_checks))
-       }
-    })
-
-    return returnMap;
-}
-
-function transformToMap(data) {
-
-var returnMap =  new Map();
-
-data.forEach((element) => {
-if(!returnMap.get(element.domain)){
-returnMap.set(element.domain, element.visits);
-} else {
-returnMap.set(element.domain, Number(returnMap.get(element.domain))+element.visits)
-}
-})
-
-return returnMap;
-
-
-}
-
-function hoursvisited(data){
-    var returnMap = new Map();
-
-    data.forEach((element)=>{
-       if(!returnMap.get(element.v_span_hr)){
-           returnMap.set(element.domain,element.v_span_hr);
-       }
-       else{
-           returnMap.set(element.domain, Number(returnMap.get(element.domain)+element.v_span_hr))
-       }
-    })
-
-    return returnMap;
-}
-
-
-</script>
 </body>
 </html>
