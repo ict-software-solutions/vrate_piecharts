@@ -56,6 +56,7 @@ function drawChart() {
         header_array =["Sites","Hours Spent"]
 
         var table = document.createElement('table');
+         table.className = "table";
         var head = table.insertRow(-1);
             for (var i = 0; i < 2; i++) {
                 var headerCell = document.createElement("TH");
@@ -78,6 +79,7 @@ function drawChart() {
         data2.addColumn('number', 'block_rate');
         data2.addRows(topblockedsite);
         var table2 = document.createElement('table');
+        table.className = "table";
         var head2 = table2.insertRow(-1);
             for (var i = 0; i < 2; i++) {
                 var headerCell = document.createElement("TH");
