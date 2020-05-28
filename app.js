@@ -4,13 +4,10 @@ google.charts.setOnLoadCallback(drawChart);
 function drawChart() {
 
       
-    var reportdata;  
-    var mappeddata;
+    var reportdata; 
     var top_visited_array = [];
     var array_hours =[];
     var array_block_hours =[];
-    const map = new Map();
-    const visited_map = new Map();
     var jsonData = fetch("reportdata.json").then(function(resp){
       return resp.json();
     }).then(function(data){
@@ -22,7 +19,7 @@ function drawChart() {
       var topFivedata = data_array.slice(0,5);
       var top_visited_hours = hoursvisited(reportdata);
      
-      var top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
+      top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
      
       for(i=0; i<topFivedata.length; i++){
           for(j=0;j<top_visited_array.length;j++){
