@@ -1,0 +1,18 @@
+.table
+{
+    border: none;
+}
+.card-body
+{
+    flex: 1 1 auto;
+min-height: 1px;
+padding: 1.25rem 0;
+}
+.card{
+    padding: 1.25rem;
+}
+
+#divtable table tr th,#divtable2 table tr th{
+    text-align: left;
+    padding: 0.75rem 0.25rem;
+  }
