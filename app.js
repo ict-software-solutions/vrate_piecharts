@@ -125,9 +125,7 @@ function drawChart() {
          var chart = new google.visualization.PieChart(document.getElementById('donutchart2'));  
          chart.draw(data2, options2);
         
-         var table = document.getElementById("mytable");
-         var rowCount = table.rows.length;
-         var row = table.insertRow(rowCount);
+         
         
          
         
@@ -142,7 +140,7 @@ function drawChart() {
         var returnMap = new Map();
     
         data.forEach((element)=>{
-           if(!returnMap.get(element.all_dom_checks)){
+           if(!returnMap.get(element.domain)){
                returnMap.set(element.domain,element.all_dom_checks);
            }
            else{
