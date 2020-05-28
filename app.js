@@ -133,9 +133,7 @@ function drawChart() {
       );
       chart.draw(data2, options2);
 
-      var table = document.getElementById("mytable");
-      var rowCount = table.rows.length;
-      var row = table.insertRow(rowCount);
+      
     });
 }
 
