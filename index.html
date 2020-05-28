@@ -78,8 +78,8 @@
                         <td id="top_visited_hours_3" style="text-align: right;"></td>
                      
                       </tr>
-
-                      <tr>
+                        
+                        <tr>
                         <td id="top_visited_domain_4">facebook.com</td>
                         <td id="top_visited_hours_4" style="text-align: right;"></td>
                      
@@ -151,8 +151,8 @@
                         <td id="top_blocked_hours_3" style="text-align: right;">765</td>
                      
                       </tr>
-
-                      <tr>
+                        
+                         <tr>
                         <td id = "blocked_domain_4">facebook.com</td>
                         <td id="top_blocked_hours_4" style="text-align: right;">765</td>
                      
@@ -205,14 +205,12 @@ var jsonData = fetch("reportdata.json").then(function(resp){
   
   
   var dataMapReqd = transformToMap(reportdata);
-  console.log('domain map is', dataMapReqd);
   var data_array = [...dataMapReqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-  console.log('sortedData, ', data_array);
   var topFivedata = data_array.slice(0,5);
   var top_visited_hours = hoursvisited(reportdata);
-  console.log('top hours visited',top_visited_hours);
+ 
   var top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-  console.log('visited array',top_visited_array);
+ 
   for(i=0; i<topFivedata.length; i++){
       for(j=0;j<top_visited_array.length;j++){
           if(topFivedata[i][0] == top_visited_array[j][0]){
@@ -220,12 +218,12 @@ var jsonData = fetch("reportdata.json").then(function(resp){
           }
       }
   }
-  console.log(array_hours);
+ ;
 
   var blockedmapreqd = blockedsitemap(reportdata); 
-  console.log('Blocked data Map', blockedmapreqd); 
+ 
   var blocked_array = [...blockedmapreqd.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-  console.log('Blocked Data Array', blocked_array);
+  
   var topblockedsite = blocked_array.slice(0,5);
   for(i=0; i<topblockedsite.length; i++){
       for(j=0;j<top_visited_array.length;j++){
@@ -234,26 +232,23 @@ var jsonData = fetch("reportdata.json").then(function(resp){
           }
       }
   }
-  console.log(array_block_hours);
-  
-  
 
-
+  
   var data = new google.visualization.DataTable();
   var data2 = new google.visualization.DataTable();
     
     data.addColumn('string','Domain');
     data.addColumn('number','visits');
     data.addRows(topFivedata);
-    for(value =1 ; value < 6; value ++){
+   for(value =1 ; value < 6; value ++){
       document.getElementById("top_visited_domain_" + value).innerHTML = topFivedata[value-1][0];
       document.getElementById("top_visited_hours_" + value).innerHTML = array_hours[value-1][1];
     }
-   
+
     data2.addColumn('string','Doamin');
     data2.addColumn('number', 'block_rate');
     data2.addRows(topblockedsite);
-    for(value =1 ; value < 6; value ++){
+   for(value =1 ; value < 6; value ++){
       document.getElementById("blocked_domain_" + value).innerHTML = topblockedsite[value-1][0];
       document.getElementById("top_blocked_hours_" + value).innerHTML = array_block_hours[value-1][1];
     }
