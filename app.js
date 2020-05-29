@@ -7,6 +7,7 @@ function drawChart() {
     var reportdata; 
     var top_visited_array = [];
     var array_hours =[];
+    
     var array_block_hours =[];
     var jsonData = fetch("reportdata.json").then(function(resp){
       return resp.json();
