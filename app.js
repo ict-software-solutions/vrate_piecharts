@@ -168,22 +168,7 @@ function drawChart() {
   return returnMap;
 }
 
-function transformToMap(data) {
-  var returnMap = new Map();
 
-  data.forEach((element) => {
-    if (!returnMap.get(element.domain)) {
-      returnMap.set(element.domain, element.visits);
-    } else {
-      returnMap.set(
-        element.domain,
-        Number(returnMap.get(element.domain)) + element.visits
-      );
-    }
-  });
-
-  return returnMap;
-}
 
 function hoursvisited(data) {
   var returnMap = new Map();
