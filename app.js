@@ -176,11 +176,11 @@ function hoursvisited(data) {
 
   data.forEach((element) => {
     if (!returnMap.get(element.v_span_hr)) {
-      returnMap.set(element.domain, (element.v_span_hr + (element.v_span_min/60)));
+      returnMap.set(element.domain, (Math.round(element.v_span_hr + (element.v_span_min/60))));
     } else {
       returnMap.set(
         element.domain,
-        Number(returnMap.get(element.domain) + (element.v_span_hr + (element.v_span_min/60)))
+        Number(returnMap.get(element.domain) + (Math.round(element.v_span_hr + (element.v_span_min/60))))
       );
     }
   });
