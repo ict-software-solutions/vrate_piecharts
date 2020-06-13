@@ -24,6 +24,14 @@ function drawTable() {
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
 
+      for (let i=0;i<blocked_array.length;i++){
+        if(blocked_array[i][1] == null){
+          blocked_array[i][1] = 0;
+        }
+      }
+
+      console.log(blocked_array);
+
       for (let i = 0; i < data_array.length; i++) {
         for (let j = 0; j < top_visited_array.length; j++) {
           if (data_array[i][0] == top_visited_array[j][0]) {
@@ -58,6 +66,13 @@ function drawTable() {
           next: "next",
         },
         showRowNumber: true,
+        headerCell: "headerCellClass",
+    width: '80%',
+    cssClassNames : {
+      'headerCell': "headerCellClass",
+      'tableCell' : "tableCellClass",
+      'oddTableRow' : "oddRowClass"
+    }
       };
 
       table.draw(data, options);
