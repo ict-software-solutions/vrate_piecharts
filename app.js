@@ -5,6 +5,7 @@ function drawChart() {
 
       
     var report; 
+    var reportdata;
     var top_visited_array = [];
     var array_hours =[];
     var date = new Date();
@@ -17,16 +18,19 @@ function drawChart() {
     })
     .then(function (data) {
       report = data;
-      if(datefilter == "thisweek"){
-        var reportdata = JSON.parse(report).filter(function (response){
+      if(datefilter.value == "thisweek"){
+         reportdata = JSON.parse(report).filter(function (response){
           return ((response.req_date) > (date - 7));
         });
       }
 
-      else{
-        var reportdata = JSON.parse(report).filter(function (response){
+      else if(datefilter.value == "thismonth"){
+       reportdata = JSON.parse(report).filter(function (response){
           return ((response.req_date) > (date -30));
         });
+      }
+      else{
+        reportdata = report;
       }
       var dataMapReqd = transformToMap(reportdata);
       console.log('data', dataMapReqd);
