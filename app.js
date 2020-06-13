@@ -24,7 +24,7 @@ function drawChart() {
       }
 
       else{
-        var reportdata = JSON.parse(jsonData).filter(function (response){
+        var reportdata = JSON.parse(report).filter(function (response){
           return ((response.req_date) > (date -30));
         });
       }
