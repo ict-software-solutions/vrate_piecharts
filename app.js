@@ -4,18 +4,32 @@ google.charts.setOnLoadCallback(drawChart);
 function drawChart() {
 
       
-    var reportdata; 
+    var report; 
     var top_visited_array = [];
     var array_hours =[];
+    var date = new Date();
+    var datefilter = document.getElementById("filter_1");
+    var datefilter_2 = document.getElementById("filter_2");
     
     var array_block_hours =[];
     var jsonData = fetch("reportdata.json").then(function(resp){
       return resp.json();
     })
     .then(function (data) {
-      reportdata = data;
+      report = data;
+      if(datefilter == "thisweek"){
+        var reportdata = JSON.parse(report).filter(function (response){
+          return ((response.req_date) > (date - 7));
+        });
+      }
 
+      else{
+        var reportdata = JSON.parse(jsonData).filter(function (response){
+          return ((response.req_date) > (date -30));
+        });
+      }
       var dataMapReqd = transformToMap(reportdata);
+      console.log('data', dataMapReqd);
       var data_array = [...dataMapReqd.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );

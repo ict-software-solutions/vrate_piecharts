@@ -43,8 +43,18 @@ function drawTable(){
         data.addColumn('number', 'Blocked rate');
         data.addRows(table_array);
           var table = new google.visualization.Table(document.getElementById('viewtable'));
+          var options = {
+            page: 'enable',
+            pageSize: 15,
+            pagingSymbols: {
+              prev: 'prev',
+              next: 'next'
+          },
+          showRowNumber: true
 
-          table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+          }
+ 
+          table.draw(data, options);
       })
 
 }
