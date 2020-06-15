@@ -21,22 +21,37 @@
                  <div class="col-md-6">
                     <div class="card">
                      <div class="card-title">
-                <div class="row">
+                      <div class="row">
 
-                    <div class="col-md-6" >Top Sites Visited</div>
-                    <div class="col-md-6" style="text-align: right;">
-                     <div class="dropdown">
-                      <select name="date" id="filter_1" aria-placeholder="select">
-                        <option value="all">All</option>
-                        <option value="thisweek">This Week</option>
-                        <option value="thismonth">This Month</option>
-                      </select>
-                         </div>
-                         </div>
+                        <div class="col-md-6" >Top Sites Visited</div>
+                        <div class="col-md-6" style="text-align: right;">
+                         <div class="dropdown">
+                          <select name="date" id="filter_1" onchange="getvalue()">
+                            <option value="all">All</option>
+                            <option value="thisweek">This Week</option>
+                            <option value="thismonth">This Month</option>
+                            <option value="datewise">Datewise</option>
+                          </select>
+                             </div>
+                             </div>
+                            </div>
+    
+                            <div class="row" id="date_div" style="padding-top: 20px;">
+    
+                              <div class="col-md-6" >
+                                <div class="dateclass">
+                                  <label >Start Date</label>
+                                  <input name="fromdate" id="fromdate" type="date" placeholder="Start Date"/>
                                  </div>
-               
-            
-                 </div>
+                              </div>
+                              <div class="col-md-6" style="text-align: right;">
+                                <div class="dateclass">
+                                  <label >End Date</label>
+                                  <input name="todate" id="todate" type="date" placeholder="End Date"/>
+                                </div>
+                                  </div>
+                                   </div>
+                         </div>
 
                 <div class="card-body">
                     <div class="table" id="divtable"></div>

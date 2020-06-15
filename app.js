@@ -1,55 +1,69 @@
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawChart);
 
-function drawChart() {
+window.onload = function(){
+  this.document.getElementById("date_div").style.display = "none";
+};
 
-      
-    var report; 
-    var reportdata;
-    var top_visited_array = [];
-    var array_hours =[];
-    var date = new Date();
-    var datefilter = document.getElementById("filter_1");
-    var datefilter_2 = document.getElementById("filter_2");
-    
-    var array_block_hours =[];
-    var jsonData = fetch("reportdata.json").then(function(resp){
+function getvalue(){
+  var val;
+  console.log(this.document.getElementById("filter_1").value);
+  if((this.document.getElementById("filter_1").value == "datewise")){
+    this.document.getElementById("date_div").style.display = "flex";
+    val = true;
+  }
+  else{
+    this.document.getElementById("date_div").style.display = "none";
+  }
+}
+
+function drawChart() {
+  var report;
+  var reportdata;
+  var top_visited_array = [];
+  var array_hours = [];
+  var date = new Date();
+  var datefilter = document.getElementById("filter_1");
+  var datefilter_2 = document.getElementById("filter_2");
+
+  var array_block_hours = [];
+  var jsonData = fetch("reportdata.json")
+    .then(function (resp) {
       return resp.json();
     })
     .then(function (data) {
       report = data;
-      if(datefilter.value == "thisweek"){
-         reportdata = JSON.parse(report).filter(function (response){
-          return ((response.req_date) > (date - 7));
+      if (datefilter.value == "thisweek") {
+        reportdata = JSON.parse(report).filter(function (response) {
+          return response.req_date > date - 7;
         });
-      }
-
-      else if(datefilter.value == "thismonth"){
-       reportdata = JSON.parse(report).filter(function (response){
-          return ((response.req_date) > (date -30));
+      } else if (datefilter.value == "thismonth") {
+        reportdata = JSON.parse(report).filter(function (response) {
+          return response.req_date > date - 30;
         });
-      }
-      else{
+      } else {
         reportdata = report;
       }
       var dataMapReqd = transformToMap(reportdata);
-      console.log('data', dataMapReqd);
+      console.log("data", dataMapReqd);
       var data_array = [...dataMapReqd.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
       var topFivedata = data_array.slice(0, 5);
       var top_visited_hours = hoursvisited(reportdata);
-     
-      top_visited_array = [...top_visited_hours.entries()].sort((a,b)=> Number(a[1]) < Number(b[1])?0:-1);
-     
-      for(i=0; i<topFivedata.length; i++){
-          for(j=0;j<top_visited_array.length;j++){
-              if(topFivedata[i][0] == top_visited_array[j][0]){
-                array_hours.push([topFivedata[i][0],top_visited_array[j][1]]);
-              }
+
+      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+      );
+
+      for (i = 0; i < topFivedata.length; i++) {
+        for (j = 0; j < top_visited_array.length; j++) {
+          if (topFivedata[i][0] == top_visited_array[j][0]) {
+            array_hours.push([topFivedata[i][0], top_visited_array[j][1]]);
           }
         }
-      
+      }
+
       var blockedmapreqd = blockedsitemap(reportdata);
 
       var blocked_array = [...blockedmapreqd.entries()].sort((a, b) =>
@@ -114,68 +128,68 @@ function drawChart() {
           newCell.textContent = cell;
         }
       }
-        
-        var divtable = document.getElementById("divtable2");
-        divtable.innerHTML = "";
-        divtable.appendChild(table2);
-        
-        var options = {
-          title: "Most visited sites : ",
-          pieHole: 0.4,
-          legend : {
-          position : 'labeled',
-          alignment : 'end',
-          },
-         enableInteractivity : false
-         };
-    
-         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));  
-         chart.draw(data, options);
-         
-    
-         var options2 = {
-          title: "Blocked sites : ",
-          pieHole: 0.4,
-          legend : {
-          position : 'labeled',
-          alignment : 'end',
-          },
-         enableInteractivity : false
-         };
-    
-         var chart = new google.visualization.PieChart(document.getElementById('donutchart2'));  
-         chart.draw(data2, options2);
-        
-        });
-    
+
+      var divtable = document.getElementById("divtable2");
+      divtable.innerHTML = "";
+      divtable.appendChild(table2);
+
+      var options = {
+        title: "Most visited sites : ",
+        pieHole: 0.4,
+        legend: {
+          position: "labeled",
+          alignment: "end",
+        },
+        enableInteractivity: false,
+      };
+
+      var chart = new google.visualization.PieChart(
+        document.getElementById("donutchart")
+      );
+      chart.draw(data, options);
+
+      var options2 = {
+        title: "Blocked sites : ",
+        pieHole: 0.4,
+        legend: {
+          position: "labeled",
+          alignment: "end",
+        },
+        enableInteractivity: false,
+      };
+
+      var chart = new google.visualization.PieChart(
+        document.getElementById("donutchart2")
+      );
+      chart.draw(data2, options2);
+    });
+}
+
+// Instantiate and draw our chart, passing in some options
+
+function blockedsitemap(data) {
+  var returnMap = new Map();
+
+  data.forEach((element) => {
+    if (!returnMap.get(element.domain)) {
+      returnMap.set(element.domain, element.all_dom_checks);
+    } else {
+      returnMap.set(
+        element.domain,
+        Number(returnMap.get(element.domain) + element.all_dom_checks)
+      );
     }
-  
-    
-    
-    // Instantiate and draw our chart, passing in some options
-    
-    function blockedsitemap(data){
-        var returnMap = new Map();
-    
-        data.forEach((element)=>{
-           if(!returnMap.get(element.domain)){
-               returnMap.set(element.domain,element.all_dom_checks);
-           }
-           else{
-               returnMap.set(element.domain, Number(returnMap.get(element.domain)+element.all_dom_checks))
-           }
-        })
-    
-        return returnMap;
-    }
-    
-    function transformToMap(data) {
-    
-    var returnMap =  new Map();
-    
-    data.forEach((element) => {
-    if(!returnMap.get(element.domain)){
-    returnMap.set(element.domain, element.visits);
+  });
+
+  return returnMap;
+}
+
+function transformToMap(data) {
+  var returnMap = new Map();
+
+  data.forEach((element) => {
+    if (!returnMap.get(element.domain)) {
+      returnMap.set(element.domain, element.visits);
     } else {
       returnMap.set(
         element.domain,
@@ -187,18 +201,22 @@ function drawChart() {
   return returnMap;
 }
 
-
-
 function hoursvisited(data) {
   var returnMap = new Map();
 
   data.forEach((element) => {
     if (!returnMap.get(element.v_span_hr)) {
-      returnMap.set(element.domain, (Math.ceil(element.v_span_hr + (element.v_span_min/60))));
+      returnMap.set(
+        element.domain,
+        Math.ceil(element.v_span_hr + element.v_span_min / 60)
+      );
     } else {
       returnMap.set(
         element.domain,
-        Number(returnMap.get(element.domain) + (Math.ceil(element.v_span_hr + (element.v_span_min/60))))
+        Number(
+          returnMap.get(element.domain) +
+            Math.ceil(element.v_span_hr + element.v_span_min / 60)
+        )
       );
     }
   });
