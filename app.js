@@ -17,6 +17,19 @@ function getvalue(){
   }
 }
 
+function getvalue2(){
+  var val;
+  console.log(this.document.getElementById("filter_2").value);
+  if((this.document.getElementById("filter_2").value == "datewise")){
+    this.document.getElementById("date_div_2").style.display = "flex";
+    val = true;
+  }
+  else{
+    this.document.getElementById("date_div_2").style.display = "none";
+  }
+
+}
+
 function drawChart() {
   var report;
   var reportdata;
