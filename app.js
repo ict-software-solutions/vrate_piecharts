@@ -1,43 +1,97 @@
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(drawChart);
+var from;
+var to;
 
-window.onload = function(){
+window.onload = function () {
   this.document.getElementById("date_div").style.display = "none";
+  this.document.getElementById("date_div_2").style.display = "none";
 };
 
-function getvalue(){
+function getvalue() {
   var val;
+  var date = new Date();
   console.log(this.document.getElementById("filter_1").value);
-  if((this.document.getElementById("filter_1").value == "datewise")){
+  if (this.document.getElementById("filter_1").value == "datewise") {
     this.document.getElementById("date_div").style.display = "flex";
-    val = true;
-  }
-  else{
+  } else if (this.document.getElementById("filter_1").value == "thisweek") {
+    from = date - 7;
+    to = date;
+    this.document.getElementById("filter_2").value == "thisweek";
+  } else if (this.document.getElementById("filter_1").value == "thismonth") {
+    from = date - 30;
+    to = date;
+    this.document.getElementById("filter_2").value == "thismonth";
+  } else {
     this.document.getElementById("date_div").style.display = "none";
   }
+  drawChart(from, to);
 }
 
-function getvalue2(){
+function getvalue2() {
   var val;
+  var date = new Date();
   console.log(this.document.getElementById("filter_2").value);
-  if((this.document.getElementById("filter_2").value == "datewise")){
+  if (this.document.getElementById("filter_1").value == "datewise") {
     this.document.getElementById("date_div_2").style.display = "flex";
-    val = true;
-  }
-  else{
+  } else if (this.document.getElementById("filter_2").value == "thisweek") {
+    from = date - 7;
+    to = date;
+  } else if (this.document.getElementById("filter_2").value == "thismonth") {
+    from = date - 30;
+    to = date;
+  } else {
     this.document.getElementById("date_div_2").style.display = "none";
   }
-
+  drawChart(from, to);
 }
 
-function drawChart() {
+function getDate1() {
+  var date = new Date();
+  if (
+    this.document.getElementById("fromdate1").value != null &&
+    this.document.getElementById("todate1").value != null
+  ) {
+    if (this.document.getElementById("todate1").value <= date) {
+      if (
+        this.document.getElementById("todate1").value -
+          this.document.getElementById("fromdate1").value <
+        8
+      ) {
+        from = this.document.getElementById("fromdate1").value;
+        to = this.document.getElementById("todate1").valule;
+      }
+    }
+  }
+  drawChart(from, to);
+}
+
+function getDate2() {
+  var date = new Date();
+  if (
+    this.document.getElementById("fromdate1").value != null &&
+    this.document.getElementById("todate1").value != null
+  ) {
+    if (this.document.getElementById("todate1").value <= date) {
+      if (
+        this.document.getElementById("todate1").value -
+          this.document.getElementById("fromdate1").value <
+        8
+      ) {
+        from = this.document.getElementById("fromdate1").value;
+        to = this.document.getElementById("todate1").valule;
+      }
+    }
+  }
+  drawChart(from, to);
+}
+
+function drawChart(datefrom, dateto) {
   var report;
   var reportdata;
   var top_visited_array = [];
   var array_hours = [];
   var date = new Date();
-  var datefilter = document.getElementById("filter_1");
-  var datefilter_2 = document.getElementById("filter_2");
 
   var array_block_hours = [];
   var jsonData = fetch("reportdata.json")
@@ -46,15 +100,12 @@ function drawChart() {
     })
     .then(function (data) {
       report = data;
-      if (datefilter.value == "thisweek") {
-        reportdata = JSON.parse(report).filter(function (response) {
-          return response.req_date > date - 7;
+      if(!datefrom && !dateto){
+        reportdata = report.filter(function (response) {
+          return (response.req_date > datefrom && response.req_date < dateto);
         });
-      } else if (datefilter.value == "thismonth") {
-        reportdata = JSON.parse(report).filter(function (response) {
-          return response.req_date > date - 30;
-        });
-      } else {
+      }
+      else{
         reportdata = report;
       }
       var dataMapReqd = transformToMap(reportdata);
