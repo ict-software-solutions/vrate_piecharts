@@ -21,25 +21,38 @@
                  <div class="col-md-6">
                     <div class="card">
                      <div class="card-title">
-                <div class="row">
+                      <div class="row">
 
-                    <div class="col-md-6" >Top Sites Visited</div>
-                    <div class="col-md-6" style="text-align: right;">
-                     <div class="dropdown">
-                    <button class="  dropdown-toggle" type="button" data-toggle="dropdown" style="outline:none;border:unset;background-color: unset;">This Week</button>
-     
-                      <ul class="dropdown-menu" style="border:none;">
-
-                        <li><a href="#" style=" color: black;margin-left: 8px;">This Month</a></li>
-                         <li><a href="#" style=" color: black; margin-left: 8px;">This Year</a></li>
+                        <div class="col-md-6" >Top Sites Visited</div>
+                        <div class="col-md-6" style="text-align: right;">
+                         <div class="dropdown">
+                          <select name="date" id="filter_1" onchange="getvalue()">
+                            <option value="all">All</option>
+                            <option value="thisweek">This Week</option>
+                            <option value="thismonth">This Month</option>
+                            <option value="datewise">Datewise</option>
+                          </select>
+                             </div>
+                             </div>
+                            </div>
     
-                      </ul>
-                         </div>
-                         </div>
+                            <div class="row" id="date_div" style="padding-top: 20px;">
+    
+                              <div class="col-md-6" >
+                                <div class="dateclass">
+                                  <label >Start Date</label>
+                                  <input name="fromdate" id="fromdate1" type="date" placeholder="Start Date"/>
                                  </div>
-               
-            
-                 </div>
+                              </div>
+                              <div class="col-md-6" style="text-align: right;">
+                                <div class="dateclass">
+                                  <label >End Date</label>
+                                  <input name="todate" id="todate1" type="date" placeholder="End Date"/>
+                                </div>
+                                  </div>
+                                  <div class="col-md-6" ><button value="Get Date" onclick="getDate1()" type="button">Ok</button></div>
+                                   </div>
+                         </div>
 
                 <div class="card-body">
                     <div class="table" id="divtable"></div>
@@ -81,7 +94,7 @@
                       
                      </tbody>
 </table>-->
-<p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
+<p style="text-align: right;"><a href="table.html" style="color: blue;">View all</a></p>
 <div class="row" style="width: 100%;height:350px ;">
 <div class="col-md-12" style="text-align: center;">
     <div id="donutchart" ></div>
@@ -95,23 +108,38 @@
         <div class="card">
             <div class="card-title">
                
-                <div class="row">
+              <div class="row">
 
-<div class="col-md-6" >Top Sites Blocked</div>
-<div class="col-md-6" style="text-align: right;">
-    <div class="dropdown">
-        <button class="  dropdown-toggle" type="button" data-toggle="dropdown" style="outline:none;border:unset;background-color: unset;">This Week
-       </button>
-        <ul class="dropdown-menu" style="border:none;">
-          <li><a href="#" style=" color: black;
-            margin-left: 8px;">This Month</a></li>
-          <li><a href="#" style=" color: black;
-            margin-left: 8px;">This Year</a></li>
-    
-        </ul>
-      </div>
-</div>
-                </div>
+                <div class="col-md-6" >Top Sites Blocked</div>
+                <div class="col-md-6" style="text-align: right;">
+                 <div class="dropdown">
+                  <select name="date" id="filter_2" onchange="getvalue2()">
+                    <option value="all">All</option>
+                    <option value="thisweek">This Week</option>
+                    <option value="thismonth">This Month</option>
+                    <option value="datewise">Datewise</option>
+                  </select>
+                     </div>
+                     </div>
+                    </div>
+
+                    <div class="row" id="date_div_2" style="padding-top: 20px;">
+
+                      <div class="col-md-6" >
+                        <div class="dateclass">
+                          <label >Start Date</label>
+                          <input name="fromdate" id="fromdate2" type="date" placeholder="Start Date"/>
+                         </div>
+                      </div>
+                      <div class="col-md-6" style="text-align: right;">
+                        <div class="dateclass">
+                          <label >End Date</label>
+                          <input name="todate" id="todate2" type="date" placeholder="End Date"/>
+                        </div>
+                          </div>
+                          <div class="col-md-6" ><button value="Get Date" onclick="getDate2()" type="button">Ok</button></div>
+                           </div>
+                 </div>
                
             
             </div>
@@ -155,7 +183,7 @@
                       
                      </tbody>
                      </table>-->
-<p style="text-align: right;"><a href="#" style="color: blue;">View all</a></p>
+<p style="text-align: right;"><a href="table.html" style="color: blue;">View all</a></p>
 <div class="row" style="width: 100%;height:350px ;">
 <div class="col-md-12" style="text-align: center;">
  
