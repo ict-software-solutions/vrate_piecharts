@@ -1,5 +1,7 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(drawChart);
+google.charts.setOnLoadCallback(drawChart1);
+google.charts.setOnLoadCallback(drawChart2);
+
 var from;
 var to;
 
@@ -17,33 +19,39 @@ function getvalue() {
   } else if (this.document.getElementById("filter_1").value == "thisweek") {
     from = date - 7;
     to = date;
+    drawChart1(from, to);
     this.document.getElementById("filter_2").value == "thisweek";
   } else if (this.document.getElementById("filter_1").value == "thismonth") {
     from = date - 30;
     to = date;
+    drawChart1(from, to);
     this.document.getElementById("filter_2").value == "thismonth";
   } else {
     this.document.getElementById("date_div").style.display = "none";
+    drawChart1(0, 0);
   }
-  drawChart(from, to);
+  
 }
 
 function getvalue2() {
   var val;
   var date = new Date();
   console.log(this.document.getElementById("filter_2").value);
-  if (this.document.getElementById("filter_1").value == "datewise") {
+  if (this.document.getElementById("filter_2").value == "datewise") {
     this.document.getElementById("date_div_2").style.display = "flex";
   } else if (this.document.getElementById("filter_2").value == "thisweek") {
     from = date - 7;
     to = date;
+    drawChart2(from, to);
   } else if (this.document.getElementById("filter_2").value == "thismonth") {
     from = date - 30;
     to = date;
+    drawChart2(from, to);
   } else {
     this.document.getElementById("date_div_2").style.display = "none";
+    drawChart2(0, 0);
   }
-  drawChart(from, to);
+ 
 }
 
 function getDate1() {
@@ -63,7 +71,7 @@ function getDate1() {
       }
     }
   }
-  drawChart(from, to);
+  drawChart1(from, to);
 }
 
 function getDate2() {
@@ -83,24 +91,24 @@ function getDate2() {
       }
     }
   }
-  drawChart(from, to);
+  drawChart2(from, to);
 }
 
-function drawChart(datefrom, dateto) {
+function drawChart1(datefrom, dateto) {
   var report;
   var reportdata;
   var top_visited_array = [];
   var array_hours = [];
   var date = new Date();
 
-  var array_block_hours = [];
+  
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
     })
     .then(function (data) {
       report = data;
-      if(!datefrom && !dateto){
+      if(datefrom && dateto){
         reportdata = report.filter(function (response) {
           return (response.req_date > datefrom && response.req_date < dateto);
         });
@@ -128,26 +136,8 @@ function drawChart(datefrom, dateto) {
         }
       }
 
-      var blockedmapreqd = blockedsitemap(reportdata);
-
-      var blocked_array = [...blockedmapreqd.entries()].sort((a, b) =>
-        Number(a[1]) < Number(b[1]) ? 0 : -1
-      );
-
-      var topblockedsite = blocked_array.slice(0, 5);
-      for (i = 0; i < topblockedsite.length; i++) {
-        for (j = 0; j < top_visited_array.length; j++) {
-          if (topblockedsite[i][0] == top_visited_array[j][0]) {
-            array_block_hours.push([
-              topblockedsite[i][0],
-              top_visited_array[j][1],
-            ]);
-          }
-        }
-      }
-
       var data = new google.visualization.DataTable();
-      var data2 = new google.visualization.DataTable();
+      
 
       data.addColumn("string", "Domain");
       data.addColumn("number", "visits");
@@ -174,9 +164,72 @@ function drawChart(datefrom, dateto) {
       dvtable.innerHTML = "";
       dvtable.appendChild(table);
 
+       var options = {
+        title: "Most visited sites : ",
+        pieHole: 0.4,
+        legend: {
+          position: "labeled",
+          alignment: "end",
+        },
+        enableInteractivity: false,
+      };
+
+      var chart = new google.visualization.PieChart(
+        document.getElementById("donutchart")
+      );
+      chart.draw(data, options);
+
+      
+    });
+}
+
+function drawChart2(datefrom, dateto){
+
+  var array_block_hours = [];
+  var report;
+  var reportdata;
+  var top_visited_array = [];
+  var date = new Date();
+  var jsonData = fetch("reportdata.json")
+    .then(function (resp) {
+      return resp.json();
+    }).then(function (data) {
+      report = data;
+      if(datefrom && dateto){
+        reportdata = report.filter(function (response) {
+          return (response.req_date > datefrom && response.req_date < dateto);
+        });
+      }
+      else{
+        reportdata = report;
+      }
+
+      var blockedmapreqd = blockedsitemap(reportdata);
+
+      var blocked_array = [...blockedmapreqd.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+      );
+      var top_visited_hours = hoursvisited(reportdata);
+
+      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+        );
+      var topblockedsite = blocked_array.slice(0, 5);
+      for (i = 0; i < topblockedsite.length; i++) {
+        for (j = 0; j < top_visited_array.length; j++) {
+          if (topblockedsite[i][0] == top_visited_array[j][0]) {
+            array_block_hours.push([
+              topblockedsite[i][0],
+              top_visited_array[j][1],
+            ]);
+          }
+        }
+      }
+      var data2 = new google.visualization.DataTable();
       data2.addColumn("string", "Doamin");
       data2.addColumn("number", "block_rate");
       data2.addRows(topblockedsite);
+      header_array = ["Sites", "Hours Spent"];
       var table2 = document.createElement("table");
       table2.className = "table";
       var head2 = table2.insertRow(-1);
@@ -197,21 +250,6 @@ function drawChart(datefrom, dateto) {
       divtable.innerHTML = "";
       divtable.appendChild(table2);
 
-      var options = {
-        title: "Most visited sites : ",
-        pieHole: 0.4,
-        legend: {
-          position: "labeled",
-          alignment: "end",
-        },
-        enableInteractivity: false,
-      };
-
-      var chart = new google.visualization.PieChart(
-        document.getElementById("donutchart")
-      );
-      chart.draw(data, options);
-
       var options2 = {
         title: "Blocked sites : ",
         pieHole: 0.4,
@@ -226,6 +264,7 @@ function drawChart(datefrom, dateto) {
         document.getElementById("donutchart2")
       );
       chart.draw(data2, options2);
+
     });
 }
 
