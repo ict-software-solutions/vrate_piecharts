@@ -66,7 +66,8 @@ function getVisitDate() {
   var timeDifference = toDate.getTime() - fromDate.getTime();
   var dayDifference = timeDifference / (1000 * 3600 * 24);
     if (visitStart != "" && visitEnd != ""){
-      if(visitStart < date && visitEnd < date){
+      
+     
     if ((visitStart < visitEnd) && (dayDifference < 8)) {
        startDate = visitStart;
         endDate = visitEnd;
@@ -80,13 +81,6 @@ function getVisitDate() {
         endError.innerHtml = "Select dates within a range of 7 days";
       }
     }
-   }
-   else{
-    if(visitStart > date){
-    startError.innerHTML = "Starting Date cannot be greater than present date";}
-    if(visitEnd > date){
-    endError.innerHTML = "Ending Date cannot be greater than present date"}
-  }
   }
   else{
     if(visitStart == "")
@@ -107,9 +101,8 @@ function getBlockDate() {
   var toDate = new Date(blockEnd);
   var timeDifference = toDate.getTime() - fromDate.getTime();
   var dayDifference = timeDifference / (1000 * 3600 * 24);
-  console.log(blockStart);
   if ( blockStart != "" && blockEnd != "" ) {
-      if(blockStart < date && blockEnd < date){
+      
     if ((blockStart < blockEnd) && (dayDifference < 8)) {
       
         startDate = blockStart;
@@ -123,13 +116,6 @@ function getBlockDate() {
           endError.innerHtml = "Select dates within a range of 7 days";
         }
       }
-    }
-    else{
-      if(blockStart > date){
-      startError.innerHTML = "Starting Date cannot be greater than present date";}
-      if(blockEnd > date){
-      endError.innerHTML = "Ending Date cannot be greater than present date"}
-    }
   }
   else{
     if(blockStart == "")
