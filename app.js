@@ -25,7 +25,7 @@ function getVisitPeriod() {
   } else if (dateFilter == "thisMonth") {
     startDate = date - 30;
     endDate = date;
-    visitChart(from, to);
+    visitChart(startDate, endDate);
   } else {
     dateDiv.style.display = "none";
     visitChart(0, 0);
@@ -82,6 +82,7 @@ function getBlockDate() {
   var date = Date.now();
   const blockStart = this.document.getElementById("startBlockDate").value;
   const blockEnd = this.document.getElementById("endBlockDate").value;
+  console.log(blockStart);
   if (
     blockStart != null &&
     blockEnd != null
@@ -101,14 +102,10 @@ function getBlockDate() {
  
 }
 
-function visitChart(datefrom, dateto) {
+function getVisitData(dateFrom, dateTo){
   var report;
   var reportdata;
-  var top_visited_array = [];
-  var array_hours = [];
-  var date = new Date();
-
-  
+  var data_array = [];
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
@@ -117,21 +114,27 @@ function visitChart(datefrom, dateto) {
       report = data;
       if(datefrom && dateto){
         reportdata = report.filter(function (response) {
-          return (response.req_date > datefrom && response.req_date < dateto);
+          return (response.req_date > dateFrom && response.req_date < dateTo);
         });
       }
       else{
         reportdata = report;
       }
-      var dataMapReqd = transformToMap(reportdata);
-      console.log("data", dataMapReqd);
-      var data_array = [...dataMapReqd.entries()].sort((a, b) =>
+      var dataMap = transformToMap(reportdata);
+      console.log("data", dataMap);
+     data_array = [...dataMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
-      );
-      var topFivedata = data_array.slice(0, 5);
-      var top_visited_hours = hoursvisited(reportdata);
+      );  
+    });
+    return data_array;
+}
 
-      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+function visitChart(datefrom, dateto) {
+ 
+  var visit_array = getVisitData(datefrom, dateto);
+  var topFivedata = visit_array.slice(0,5);
+  var top_visited_hours = hoursVisited(reportdata);
+  var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
 
@@ -185,18 +188,14 @@ function visitChart(datefrom, dateto) {
         document.getElementById("donutchart")
       );
       chart.draw(data, options);
-
-      
-    });
 }
 
-function blockedChart(datefrom, dateto){
+function getBlockData(dateFrom, dateTo){
 
-  var array_block_hours = [];
-  var report;
-  var reportdata;
-  var top_visited_array = [];
-  var date = new Date();
+ var blocked_array = [];
+ var report;
+ var reportdata;
+
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
@@ -204,24 +203,35 @@ function blockedChart(datefrom, dateto){
       report = data;
       if(datefrom && dateto){
         reportdata = report.filter(function (response) {
-          return (response.req_date > datefrom && response.req_date < dateto);
+          return (response.req_date > dateFrom && response.req_date < dateTo);
         });
       }
       else{
         reportdata = report;
       }
 
-      var blockedmapreqd = blockedsitemap(reportdata);
+      var blockedMap= blockedSiteMap(reportdata);
 
-      var blocked_array = [...blockedmapreqd.entries()].sort((a, b) =>
+      blocked_array = [...blockedMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
-      var top_visited_hours = hoursvisited(reportdata);
+      
+    });
+    return blocked_array;
+}
 
-      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+function blockedChart(dateFrom, dateTo){
+
+      var blockedArray = getBlockData(dateFrom, dateTo);
+      var topblockedsite = blockedArray.slice(0, 5);
+
+      var top_visited_hours = hoursVisited(reportdata);
+
+      var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
         );
-      var topblockedsite = blocked_array.slice(0, 5);
+      
+
       for (i = 0; i < topblockedsite.length; i++) {
         for (j = 0; j < top_visited_array.length; j++) {
           if (topblockedsite[i][0] == top_visited_array[j][0]) {
@@ -271,13 +281,11 @@ function blockedChart(datefrom, dateto){
         document.getElementById("donutchart2")
       );
       chart.draw(data2, options2);
-
-    });
 }
 
 // Instantiate and draw our chart, passing in some options
 
-function blockedsitemap(data) {
+function blockedSiteMap(data) {
   var returnMap = new Map();
 
   data.forEach((element) => {
@@ -311,7 +319,7 @@ function transformToMap(data) {
   return returnMap;
 }
 
-function hoursvisited(data) {
+function hoursVisited(data) {
   var returnMap = new Map();
 
   data.forEach((element) => {
