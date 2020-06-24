@@ -57,47 +57,85 @@ function getBlockPeriod() {
 
 function getVisitDate() {
   var date = Date.now();
-  const visitStart = this.document.getElementById("startDate").value;
-  const visitEnd = this.document.getElementById("todate1").value;
-  if (
-    visitStart != null &&
-    visitEnd != null
-  ) {
-    if (visitEnd <= date) {
-      if (
-        visitEnd -
-          visitStart <
-        8
-      ) {
-        startDate = visitStart;
+  let visitStart = this.document.getElementById("startDate").value;
+  let visitEnd = this.document.getElementById("todate1").value;
+  let startError = this.document.getElementById("startError");
+  let endError = this.document.getElementById("endError");
+  var fromDate = new Date(visitStart);
+  var toDate = new Date(visitEnd);
+  var timeDifference = toDate.getTime() - fromDate.getTime();
+  var dayDifference = timeDifference / (1000 * 3600 * 24);
+    if (visitStart != "" && visitEnd != ""){
+      if(visitStart < date && visitEnd < date){
+    if ((visitStart < visitEnd) && (dayDifference < 8)) {
+       startDate = visitStart;
         endDate = visitEnd;
         visitChart(startDate, endDate);
+      
+    }
+    else{
+      if(visitStart > visitEnd){
+      startError.innerHTML = "Starting date cannot be greater than Ending Date";}
+      if(dayDifference > 7){
+        endError.innerHtml = "Select dates within a range of 7 days";
       }
     }
+   }
+   else{
+    if(visitStart > date){
+    startError.innerHTML = "Starting Date cannot be greater than present date";}
+    if(visitEnd > date){
+    endError.innerHTML = "Ending Date cannot be greater than present date"}
+  }
+  }
+  else{
+    if(visitStart == "")
+    {startError.innerHTML = "Date cannot be empty";}
+    if(visitEnd == "")
+    {endError.innerHTML = "Date Cannot be empty";}
   }
   
 }
 
 function getBlockDate() {
   var date = Date.now();
-  const blockStart = this.document.getElementById("startBlockDate").value;
-  const blockEnd = this.document.getElementById("endBlockDate").value;
+  let blockStart = this.document.getElementById("startBlockDate").value;
+  let blockEnd = this.document.getElementById("endBlockDate").value;
+  let startError = this.document.getElementById("startBlockError");
+  let endError = this.document.getElementById("endBlockError");
+  var fromDate = new Date(blockStart);
+  var toDate = new Date(blockEnd);
+  var timeDifference = toDate.getTime() - fromDate.getTime();
+  var dayDifference = timeDifference / (1000 * 3600 * 24);
   console.log(blockStart);
-  if (
-    blockStart != null &&
-    blockEnd != null
-  ) {
-    if (blockEnd <= date) {
-      if (
-        blockEnd -
-          blockStart <
-        8
-      ) {
+  if ( blockStart != "" && blockEnd != "" ) {
+      if(blockStart < date && blockEnd < date){
+    if ((blockStart < blockEnd) && (dayDifference < 8)) {
+      
         startDate = blockStart;
         endDate = blockEnd;
         blockedChart(startDate, endDate);
       }
+      else{
+        if(blockStart > blockEnd){
+        startError.innerHTML = "Starting date cannot be greater than Ending Date";}
+        if(dayDifference > 7){
+          endError.innerHtml = "Select dates within a range of 7 days";
+        }
+      }
     }
+    else{
+      if(blockStart > date){
+      startError.innerHTML = "Starting Date cannot be greater than present date";}
+      if(blockEnd > date){
+      endError.innerHTML = "Ending Date cannot be greater than present date"}
+    }
+  }
+  else{
+    if(blockStart == "")
+    {startError.innerHTML = "Date cannot be empty";}
+    if(blockEnd == "")
+    {endError.innerHTML = "Date Cannot be empty";}
   }
  
 }
@@ -112,7 +150,7 @@ function getVisitData(dateFrom, dateTo){
     })
     .then(function (data) {
       report = data;
-      if(datefrom && dateto){
+      if(dateFrom && dateTo){
         reportdata = report.filter(function (response) {
           return (response.req_date > dateFrom && response.req_date < dateTo);
         });
@@ -122,21 +160,45 @@ function getVisitData(dateFrom, dateTo){
       }
       var dataMap = transformToMap(reportdata);
       console.log("data", dataMap);
+      
+      
      data_array = [...dataMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );  
+
+      
     });
     return data_array;
 }
 
-function visitChart(datefrom, dateto) {
- 
-  var visit_array = getVisitData(datefrom, dateto);
-  var topFivedata = visit_array.slice(0,5);
-  var top_visited_hours = hoursVisited(reportdata);
-  var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+function visitChart(dateFrom, dateTo) {
+
+  var report;
+  var reportData;
+  var top_visited_hours;
+  var top_visited_array;
+  var array_hours;
+  var jsonData = fetch("reportdata.json").then(function (resp){
+    return resp.json();
+  }).then(function (data){
+    report = data;
+    if(dateFrom && dateTo){
+      reportData = report.filter(function (response){
+        return (response.req_date > dateFrom && response.req_date < dateTo);
+      })
+    }
+    else{
+      reportData = report;
+    }
+    top_visited_hours = hoursVisited(reportData);
+    top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
+ 
+  var visit_array = getVisitData(dateFrom, dateTo);
+  var topFivedata = visit_array.slice(0,5);
+  
+  
 
       for (i = 0; i < topFivedata.length; i++) {
         for (j = 0; j < top_visited_array.length; j++) {
@@ -188,6 +250,7 @@ function visitChart(datefrom, dateto) {
         document.getElementById("donutchart")
       );
       chart.draw(data, options);
+      });
 }
 
 function getBlockData(dateFrom, dateTo){
@@ -201,7 +264,7 @@ function getBlockData(dateFrom, dateTo){
       return resp.json();
     }).then(function (data) {
       report = data;
-      if(datefrom && dateto){
+      if(dateFrom && dateTo){
         reportdata = report.filter(function (response) {
           return (response.req_date > dateFrom && response.req_date < dateTo);
         });
@@ -221,15 +284,33 @@ function getBlockData(dateFrom, dateTo){
 }
 
 function blockedChart(dateFrom, dateTo){
+  var report;
+  var reportData;
+  var top_visited_hours;
+  var top_visited_array;
+  var array_block_hours;
+  var jsonData = fetch("reportdata.json").then(function (resp){
+    return resp.json();
+  }).then(function (data){
+    report = data;
+    if(dateFrom && dateTo){
+      reportData = report.filter(function (response){
+        return (response.req_date > dateFrom && response.req_date < dateTo);
+      })
+    }
+    else{
+      reportData = report;
+    }
+    top_visited_hours = hoursVisited(reportData);
+    top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+        );
+  
 
       var blockedArray = getBlockData(dateFrom, dateTo);
       var topblockedsite = blockedArray.slice(0, 5);
-
-      var top_visited_hours = hoursVisited(reportdata);
-
-      var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
-        Number(a[1]) < Number(b[1]) ? 0 : -1
-        );
+      
+      
       
 
       for (i = 0; i < topblockedsite.length; i++) {
@@ -281,6 +362,7 @@ function blockedChart(dateFrom, dateTo){
         document.getElementById("donutchart2")
       );
       chart.draw(data2, options2);
+  });
 }
 
 // Instantiate and draw our chart, passing in some options
