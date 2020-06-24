@@ -1,100 +1,107 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(drawChart1);
-google.charts.setOnLoadCallback(drawChart2);
+google.charts.setOnLoadCallback(visitChart);
+google.charts.setOnLoadCallback(blockedChart);
 
-var from;
-var to;
+var startDate = new Date();
+var endDate = new Date();
 
 window.onload = function () {
   this.document.getElementById("date_div").style.display = "none";
   this.document.getElementById("date_div_2").style.display = "none";
 };
 
-function getvalue() {
-  var val;
-  var date = new Date();
-  console.log(this.document.getElementById("filter_1").value);
-  if (this.document.getElementById("filter_1").value == "datewise") {
-    this.document.getElementById("date_div").style.display = "flex";
-  } else if (this.document.getElementById("filter_1").value == "thisweek") {
-    from = date - 7;
-    to = date;
-    drawChart1(from, to);
-    this.document.getElementById("filter_2").value == "thisweek";
-  } else if (this.document.getElementById("filter_1").value == "thismonth") {
-    from = date - 30;
-    to = date;
-    drawChart1(from, to);
-    this.document.getElementById("filter_2").value == "thismonth";
+function getVisitPeriod() {
+  var date = Date.now();
+  const dateFilter = this.document.getElementById("visitedDateFilter").value;
+  const dateDiv = this.document.getElementById("date_div");
+  console.log(dateFilter);
+  if (dateFilter == "dateWise") {
+    dateDiv.style.display = "flex";
+  } else if (dateFilter == "thisWeek") {
+    startDate = date - 7;
+    endDate = date;
+    visitChart(startDate, endDate);
+    
+  } else if (dateFilter == "thisMonth") {
+    startDate = date - 30;
+    endDate = date;
+    visitChart(from, to);
   } else {
-    this.document.getElementById("date_div").style.display = "none";
-    drawChart1(0, 0);
+    dateDiv.style.display = "none";
+    visitChart(0, 0);
   }
   
 }
 
-function getvalue2() {
-  var val;
-  var date = new Date();
-  console.log(this.document.getElementById("filter_2").value);
-  if (this.document.getElementById("filter_2").value == "datewise") {
-    this.document.getElementById("date_div_2").style.display = "flex";
-  } else if (this.document.getElementById("filter_2").value == "thisweek") {
-    from = date - 7;
-    to = date;
-    drawChart2(from, to);
-  } else if (this.document.getElementById("filter_2").value == "thismonth") {
-    from = date - 30;
-    to = date;
-    drawChart2(from, to);
+function getBlockPeriod() {
+  var date = Date.now();
+  const dateDiv = this.document.getElementById("date_div_2");
+  const dateFilter = this.document.getElementById("blockDateFilter").value;
+  console.log(dateFilter);
+  if (dateFilter == "dateWise") {
+    dateDiv.style.display = "flex";
+  } else if (dateFilter == "thisWeek") {
+    startDate = date - 7;
+    endDate = date;
+    blockedChart(startDate, endDate);
+  } else if (dateFilter == "thisMonth") {
+    startDate = date - 30;
+    endDate = date;
+    blockedChart(startDate, endDate);
   } else {
-    this.document.getElementById("date_div_2").style.display = "none";
-    drawChart2(0, 0);
+    dateDiv.style.display = "none";
+    blockedChart(0, 0);
   }
  
 }
 
-function getDate1() {
-  var date = new Date();
+function getVisitDate() {
+  var date = Date.now();
+  const visitStart = this.document.getElementById("startDate").value;
+  const visitEnd = this.document.getElementById("todate1").value;
   if (
-    this.document.getElementById("fromdate1").value != null &&
-    this.document.getElementById("todate1").value != null
+    visitStart != null &&
+    visitEnd != null
   ) {
-    if (this.document.getElementById("todate1").value <= date) {
+    if (visitEnd <= date) {
       if (
-        this.document.getElementById("todate1").value -
-          this.document.getElementById("fromdate1").value <
+        visitEnd -
+          visitStart <
         8
       ) {
-        from = this.document.getElementById("fromdate1").value;
-        to = this.document.getElementById("todate1").valule;
+        startDate = visitStart;
+        endDate = visitEnd;
+        visitChart(startDate, endDate);
       }
     }
   }
-  drawChart1(from, to);
+  
 }
 
-function getDate2() {
-  var date = new Date();
+function getBlockDate() {
+  var date = Date.now();
+  const blockStart = this.document.getElementById("startBlockDate").value;
+  const blockEnd = this.document.getElementById("endBlockDate").value;
   if (
-    this.document.getElementById("fromdate1").value != null &&
-    this.document.getElementById("todate1").value != null
+    blockStart != null &&
+    blockEnd != null
   ) {
-    if (this.document.getElementById("todate1").value <= date) {
+    if (blockEnd <= date) {
       if (
-        this.document.getElementById("todate1").value -
-          this.document.getElementById("fromdate1").value <
+        blockEnd -
+          blockStart <
         8
       ) {
-        from = this.document.getElementById("fromdate1").value;
-        to = this.document.getElementById("todate1").valule;
+        startDate = blockStart;
+        endDate = blockEnd;
+        blockedChart(startDate, endDate);
       }
     }
   }
-  drawChart2(from, to);
+ 
 }
 
-function drawChart1(datefrom, dateto) {
+function visitChart(datefrom, dateto) {
   var report;
   var reportdata;
   var top_visited_array = [];
@@ -183,7 +190,7 @@ function drawChart1(datefrom, dateto) {
     });
 }
 
-function drawChart2(datefrom, dateto){
+function blockedChart(datefrom, dateto){
 
   var array_block_hours = [];
   var report;
