@@ -56,7 +56,7 @@ function drawTable() {
       data.addColumn("number", "Blocked rate");
       data.addRows(table_array);
       var table = new google.visualization.Table(
-        document.getElementById("viewtable")
+        document.getElementById("viewTable")
       );
       var options = {
         page: "enable",
