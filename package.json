@@ -1,0 +1,25 @@
+{
+  "name": "vrate_piecharts",
+  "version": "1.0.0",
+  "description": "vrate plugin charts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ict-software-solutions/vrate_piecharts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ict-software-solutions/vrate_piecharts/issues"
+  },
+  "homepage": "https://github.com/ict-software-solutions/vrate_piecharts#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.3.1"
+  }
+}
