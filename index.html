@@ -26,31 +26,33 @@
                         <div class="col-md-6" >Top Sites Visited</div>
                         <div class="col-md-6" style="text-align: right;">
                          <div class="dropdown">
-                          <select name="date" id="filter_1" onchange="getvalue()">
+                          <select name="date" id="visitedDateFilter" onchange="getVisitPeriod()">
                             <option value="all">All</option>
-                            <option value="thisweek">This Week</option>
-                            <option value="thismonth">This Month</option>
-                            <option value="datewise">Datewise</option>
+                            <option value="thisWeek">This Week</option>
+                            <option value="thisMonth">This Month</option>
+                            <option value="dateWise">Datewise</option>
                           </select>
                              </div>
                              </div>
                             </div>
     
                             <div class="row" id="date_div" style="padding-top: 20px;">
-    
+                              <p>
                               <div class="col-md-6" >
                                 <div class="dateclass">
                                   <label >Start Date</label>
-                                  <input name="fromdate" id="fromdate1" type="date" placeholder="Start Date"/>
+                                  <input name="startDate" id="startDate" type="date" placeholder="Start Date"/>
+                                  <span id="errorname"></span>
                                  </div>
                               </div>
                               <div class="col-md-6" style="text-align: right;">
                                 <div class="dateclass">
                                   <label >End Date</label>
-                                  <input name="todate" id="todate1" type="date" placeholder="End Date"/>
+                                  <input name="endDate" id="endDate" type="date" placeholder="End Date"/>
                                 </div>
                                   </div>
-                                  <div class="col-md-6" ><button value="Get Date" onclick="getDate1()" type="button">Ok</button></div>
+                                </p>
+                                  <div class="col-md-6" ><button value="Get Date" onclick="getVisitDate()" type="button">Ok</button></div>
                                    </div>
                          </div>
 
@@ -113,11 +115,11 @@
                 <div class="col-md-6" >Top Sites Blocked</div>
                 <div class="col-md-6" style="text-align: right;">
                  <div class="dropdown">
-                  <select name="date" id="filter_2" onchange="getvalue2()">
+                  <select name="date" id="blockDateFilter" onchange="getBlockPeriod()">
                     <option value="all">All</option>
-                    <option value="thisweek">This Week</option>
-                    <option value="thismonth">This Month</option>
-                    <option value="datewise">Datewise</option>
+                    <option value="thisWeek">This Week</option>
+                    <option value="thisMonth">This Month</option>
+                    <option value="dateWise">Datewise</option>
                   </select>
                      </div>
                      </div>
@@ -128,16 +130,16 @@
                       <div class="col-md-6" >
                         <div class="dateclass">
                           <label >Start Date</label>
-                          <input name="fromdate" id="fromdate2" type="date" placeholder="Start Date"/>
+                          <input name="fromdate" id="startBlockDate" type="date" placeholder="Start Date"/>
                          </div>
                       </div>
                       <div class="col-md-6" style="text-align: right;">
                         <div class="dateclass">
                           <label >End Date</label>
-                          <input name="todate" id="todate2" type="date" placeholder="End Date"/>
+                          <input name="todate" id="endBlockDate " type="date" placeholder="End Date"/>
                         </div>
                           </div>
-                          <div class="col-md-6" ><button value="Get Date" onclick="getDate2()" type="button">Ok</button></div>
+                          <div class="col-md-6" ><button value="Get Date" onclick="getBlockDate()" type="button">Ok</button></div>
                            </div>
                  </div>
                

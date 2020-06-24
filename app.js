@@ -1,122 +1,140 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(drawChart);
-var from;
-var to;
+google.charts.setOnLoadCallback(visitChart);
+google.charts.setOnLoadCallback(blockedChart);
+
+var startDate = new Date();
+var endDate = new Date();
 
 window.onload = function () {
   this.document.getElementById("date_div").style.display = "none";
   this.document.getElementById("date_div_2").style.display = "none";
 };
 
-function getvalue() {
-  var val;
-  var date = new Date();
-  console.log(this.document.getElementById("filter_1").value);
-  if (this.document.getElementById("filter_1").value == "datewise") {
-    this.document.getElementById("date_div").style.display = "flex";
-  } else if (this.document.getElementById("filter_1").value == "thisweek") {
-    from = date - 7;
-    to = date;
-    this.document.getElementById("filter_2").value == "thisweek";
-  } else if (this.document.getElementById("filter_1").value == "thismonth") {
-    from = date - 30;
-    to = date;
-    this.document.getElementById("filter_2").value == "thismonth";
+function getVisitPeriod() {
+  var date = Date.now();
+  const dateFilter = this.document.getElementById("visitedDateFilter").value;
+  const dateDiv = this.document.getElementById("date_div");
+  console.log(dateFilter);
+  if (dateFilter == "dateWise") {
+    dateDiv.style.display = "flex";
+  } else if (dateFilter == "thisWeek") {
+    startDate = date - 7;
+    endDate = date;
+    visitChart(startDate, endDate);
+    
+  } else if (dateFilter == "thisMonth") {
+    startDate = date - 30;
+    endDate = date;
+    visitChart(startDate, endDate);
   } else {
-    this.document.getElementById("date_div").style.display = "none";
+    dateDiv.style.display = "none";
+    visitChart(0, 0);
   }
-  drawChart(from, to);
+  
 }
 
-function getvalue2() {
-  var val;
-  var date = new Date();
-  console.log(this.document.getElementById("filter_2").value);
-  if (this.document.getElementById("filter_1").value == "datewise") {
-    this.document.getElementById("date_div_2").style.display = "flex";
-  } else if (this.document.getElementById("filter_2").value == "thisweek") {
-    from = date - 7;
-    to = date;
-  } else if (this.document.getElementById("filter_2").value == "thismonth") {
-    from = date - 30;
-    to = date;
+function getBlockPeriod() {
+  var date = Date.now();
+  const dateDiv = this.document.getElementById("date_div_2");
+  const dateFilter = this.document.getElementById("blockDateFilter").value;
+  console.log(dateFilter);
+  if (dateFilter == "dateWise") {
+    dateDiv.style.display = "flex";
+  } else if (dateFilter == "thisWeek") {
+    startDate = date - 7;
+    endDate = date;
+    blockedChart(startDate, endDate);
+  } else if (dateFilter == "thisMonth") {
+    startDate = date - 30;
+    endDate = date;
+    blockedChart(startDate, endDate);
   } else {
-    this.document.getElementById("date_div_2").style.display = "none";
+    dateDiv.style.display = "none";
+    blockedChart(0, 0);
   }
-  drawChart(from, to);
+ 
 }
 
-function getDate1() {
-  var date = new Date();
+function getVisitDate() {
+  var date = Date.now();
+  const visitStart = this.document.getElementById("startDate").value;
+  const visitEnd = this.document.getElementById("todate1").value;
   if (
-    this.document.getElementById("fromdate1").value != null &&
-    this.document.getElementById("todate1").value != null
+    visitStart != null &&
+    visitEnd != null
   ) {
-    if (this.document.getElementById("todate1").value <= date) {
+    if (visitEnd <= date) {
       if (
-        this.document.getElementById("todate1").value -
-          this.document.getElementById("fromdate1").value <
+        visitEnd -
+          visitStart <
         8
       ) {
-        from = this.document.getElementById("fromdate1").value;
-        to = this.document.getElementById("todate1").valule;
+        startDate = visitStart;
+        endDate = visitEnd;
+        visitChart(startDate, endDate);
       }
     }
   }
-  drawChart(from, to);
+  
 }
 
-function getDate2() {
-  var date = new Date();
+function getBlockDate() {
+  var date = Date.now();
+  const blockStart = this.document.getElementById("startBlockDate").value;
+  const blockEnd = this.document.getElementById("endBlockDate").value;
+  console.log(blockStart);
   if (
-    this.document.getElementById("fromdate1").value != null &&
-    this.document.getElementById("todate1").value != null
+    blockStart != null &&
+    blockEnd != null
   ) {
-    if (this.document.getElementById("todate1").value <= date) {
+    if (blockEnd <= date) {
       if (
-        this.document.getElementById("todate1").value -
-          this.document.getElementById("fromdate1").value <
+        blockEnd -
+          blockStart <
         8
       ) {
-        from = this.document.getElementById("fromdate1").value;
-        to = this.document.getElementById("todate1").valule;
+        startDate = blockStart;
+        endDate = blockEnd;
+        blockedChart(startDate, endDate);
       }
     }
   }
-  drawChart(from, to);
+ 
 }
 
-function drawChart(datefrom, dateto) {
+function getVisitData(dateFrom, dateTo){
   var report;
   var reportdata;
-  var top_visited_array = [];
-  var array_hours = [];
-  var date = new Date();
-
-  var array_block_hours = [];
+  var data_array = [];
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
     })
     .then(function (data) {
       report = data;
-      if(!datefrom && !dateto){
+      if(datefrom && dateto){
         reportdata = report.filter(function (response) {
-          return (response.req_date > datefrom && response.req_date < dateto);
+          return (response.req_date > dateFrom && response.req_date < dateTo);
         });
       }
       else{
         reportdata = report;
       }
-      var dataMapReqd = transformToMap(reportdata);
-      console.log("data", dataMapReqd);
-      var data_array = [...dataMapReqd.entries()].sort((a, b) =>
+      var dataMap = transformToMap(reportdata);
+      console.log("data", dataMap);
+     data_array = [...dataMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
-      );
-      var topFivedata = data_array.slice(0, 5);
-      var top_visited_hours = hoursvisited(reportdata);
+      );  
+    });
+    return data_array;
+}
 
-      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+function visitChart(datefrom, dateto) {
+ 
+  var visit_array = getVisitData(datefrom, dateto);
+  var topFivedata = visit_array.slice(0,5);
+  var top_visited_hours = hoursVisited(reportdata);
+  var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
 
@@ -128,26 +146,8 @@ function drawChart(datefrom, dateto) {
         }
       }
 
-      var blockedmapreqd = blockedsitemap(reportdata);
-
-      var blocked_array = [...blockedmapreqd.entries()].sort((a, b) =>
-        Number(a[1]) < Number(b[1]) ? 0 : -1
-      );
-
-      var topblockedsite = blocked_array.slice(0, 5);
-      for (i = 0; i < topblockedsite.length; i++) {
-        for (j = 0; j < top_visited_array.length; j++) {
-          if (topblockedsite[i][0] == top_visited_array[j][0]) {
-            array_block_hours.push([
-              topblockedsite[i][0],
-              top_visited_array[j][1],
-            ]);
-          }
-        }
-      }
-
       var data = new google.visualization.DataTable();
-      var data2 = new google.visualization.DataTable();
+      
 
       data.addColumn("string", "Domain");
       data.addColumn("number", "visits");
@@ -174,9 +174,79 @@ function drawChart(datefrom, dateto) {
       dvtable.innerHTML = "";
       dvtable.appendChild(table);
 
+       var options = {
+        title: "Most visited sites : ",
+        pieHole: 0.4,
+        legend: {
+          position: "labeled",
+          alignment: "end",
+        },
+        enableInteractivity: false,
+      };
+
+      var chart = new google.visualization.PieChart(
+        document.getElementById("donutchart")
+      );
+      chart.draw(data, options);
+}
+
+function getBlockData(dateFrom, dateTo){
+
+ var blocked_array = [];
+ var report;
+ var reportdata;
+
+  var jsonData = fetch("reportdata.json")
+    .then(function (resp) {
+      return resp.json();
+    }).then(function (data) {
+      report = data;
+      if(datefrom && dateto){
+        reportdata = report.filter(function (response) {
+          return (response.req_date > dateFrom && response.req_date < dateTo);
+        });
+      }
+      else{
+        reportdata = report;
+      }
+
+      var blockedMap= blockedSiteMap(reportdata);
+
+      blocked_array = [...blockedMap.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+      );
+      
+    });
+    return blocked_array;
+}
+
+function blockedChart(dateFrom, dateTo){
+
+      var blockedArray = getBlockData(dateFrom, dateTo);
+      var topblockedsite = blockedArray.slice(0, 5);
+
+      var top_visited_hours = hoursVisited(reportdata);
+
+      var top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+        Number(a[1]) < Number(b[1]) ? 0 : -1
+        );
+      
+
+      for (i = 0; i < topblockedsite.length; i++) {
+        for (j = 0; j < top_visited_array.length; j++) {
+          if (topblockedsite[i][0] == top_visited_array[j][0]) {
+            array_block_hours.push([
+              topblockedsite[i][0],
+              top_visited_array[j][1],
+            ]);
+          }
+        }
+      }
+      var data2 = new google.visualization.DataTable();
       data2.addColumn("string", "Doamin");
       data2.addColumn("number", "block_rate");
       data2.addRows(topblockedsite);
+      header_array = ["Sites", "Hours Spent"];
       var table2 = document.createElement("table");
       table2.className = "table";
       var head2 = table2.insertRow(-1);
@@ -197,21 +267,6 @@ function drawChart(datefrom, dateto) {
       divtable.innerHTML = "";
       divtable.appendChild(table2);
 
-      var options = {
-        title: "Most visited sites : ",
-        pieHole: 0.4,
-        legend: {
-          position: "labeled",
-          alignment: "end",
-        },
-        enableInteractivity: false,
-      };
-
-      var chart = new google.visualization.PieChart(
-        document.getElementById("donutchart")
-      );
-      chart.draw(data, options);
-
       var options2 = {
         title: "Blocked sites : ",
         pieHole: 0.4,
@@ -226,12 +281,11 @@ function drawChart(datefrom, dateto) {
         document.getElementById("donutchart2")
       );
       chart.draw(data2, options2);
-    });
 }
 
 // Instantiate and draw our chart, passing in some options
 
-function blockedsitemap(data) {
+function blockedSiteMap(data) {
   var returnMap = new Map();
 
   data.forEach((element) => {
@@ -265,7 +319,7 @@ function transformToMap(data) {
   return returnMap;
 }
 
-function hoursvisited(data) {
+function hoursVisited(data) {
   var returnMap = new Map();
 
   data.forEach((element) => {
