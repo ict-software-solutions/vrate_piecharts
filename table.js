@@ -24,13 +24,11 @@ function drawTable() {
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
 
-      for (let i=0;i<blocked_array.length;i++){
-        if(blocked_array[i][1] == null){
+      for (let i = 0; i < blocked_array.length; i++) {
+        if (blocked_array[i][1] == null) {
           blocked_array[i][1] = 0;
         }
       }
-
-      console.log(blocked_array);
 
       for (let i = 0; i < data_array.length; i++) {
         for (let j = 0; j < top_visited_array.length; j++) {
@@ -48,7 +46,7 @@ function drawTable() {
           }
         }
       }
-      console.log("table", table_array);
+
       var data = new google.visualization.DataTable();
       data.addColumn("string", "Domain");
       data.addColumn("number", "Visits");
@@ -67,12 +65,12 @@ function drawTable() {
         },
         showRowNumber: true,
         headerCell: "headerCellClass",
-    width: '80%',
-    cssClassNames : {
-      'headerCell': "headerCellClass",
-      'tableCell' : "tableCellClass",
-      'oddTableRow' : "oddRowClass"
-    }
+        width: "80%",
+        cssClassNames: {
+          headerCell: "headerCellClass",
+          tableCell: "tableCellClass",
+          oddTableRow: "oddRowClass",
+        },
       };
 
       table.draw(data, options);

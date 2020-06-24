@@ -14,14 +14,12 @@ function getVisitPeriod() {
   var date = Date.now();
   const dateFilter = this.document.getElementById("visitedDateFilter").value;
   const dateDiv = this.document.getElementById("date_div");
-  console.log(dateFilter);
   if (dateFilter == "dateWise") {
     dateDiv.style.display = "flex";
   } else if (dateFilter == "thisWeek") {
     startDate = date - 7;
     endDate = date;
     getVisitData(startDate, endDate);
-    
   } else if (dateFilter == "thisMonth") {
     startDate = date - 30;
     endDate = date;
@@ -30,14 +28,12 @@ function getVisitPeriod() {
     dateDiv.style.display = "none";
     getVisitData(0, 0);
   }
-  
 }
 
 function getBlockPeriod() {
   var date = Date.now();
   const dateDiv = this.document.getElementById("date_div_2");
   const dateFilter = this.document.getElementById("blockDateFilter").value;
-  console.log(dateFilter);
   if (dateFilter == "dateWise") {
     dateDiv.style.display = "flex";
   } else if (dateFilter == "thisWeek") {
@@ -52,7 +48,6 @@ function getBlockPeriod() {
     dateDiv.style.display = "none";
     getBlockData(0, 0);
   }
- 
 }
 
 function getVisitDate() {
@@ -65,30 +60,28 @@ function getVisitDate() {
   var toDate = new Date(visitEnd);
   var timeDifference = toDate.getTime() - fromDate.getTime();
   var dayDifference = timeDifference / (1000 * 3600 * 24);
-    if (visitStart != "" && visitEnd != ""){
-      
-     
-    if ((visitStart < visitEnd) && (dayDifference < 8)) {
-       startDate = visitStart;
-        endDate = visitEnd;
-        getVisitData(startDate, endDate);
-      
-    }
-    else{
-      if(visitStart > visitEnd){
-      startError.innerHTML = "Starting date cannot be greater than Ending Date";}
-      if(dayDifference > 7){
+  if (visitStart != "" && visitEnd != "") {
+    if (visitStart < visitEnd && dayDifference < 8) {
+      startDate = visitStart;
+      endDate = visitEnd;
+      getVisitData(startDate, endDate);
+    } else {
+      if (visitStart > visitEnd) {
+        startError.innerHTML =
+          "Starting date cannot be greater than Ending Date";
+      }
+      if (dayDifference > 7) {
         endError.innerHtml = "Select dates within a range of 7 days";
       }
     }
+  } else {
+    if (visitStart == "") {
+      startError.innerHTML = "Date cannot be empty";
+    }
+    if (visitEnd == "") {
+      endError.innerHTML = "Date Cannot be empty";
+    }
   }
-  else{
-    if(visitStart == "")
-    {startError.innerHTML = "Date cannot be empty";}
-    if(visitEnd == "")
-    {endError.innerHTML = "Date Cannot be empty";}
-  }
-  
 }
 
 function getBlockDate() {
@@ -101,32 +94,31 @@ function getBlockDate() {
   var toDate = new Date(blockEnd);
   var timeDifference = toDate.getTime() - fromDate.getTime();
   var dayDifference = timeDifference / (1000 * 3600 * 24);
-  if ( blockStart != "" && blockEnd != "" ) {
-      
-    if ((blockStart < blockEnd) && (dayDifference < 8)) {
-      
-        startDate = blockStart;
-        endDate = blockEnd;
-        getBlockData(startDate, endDate);
+  if (blockStart != "" && blockEnd != "") {
+    if (blockStart < blockEnd && dayDifference < 8) {
+      startDate = blockStart;
+      endDate = blockEnd;
+      getBlockData(startDate, endDate);
+    } else {
+      if (blockStart > blockEnd) {
+        startError.innerHTML =
+          "Starting date cannot be greater than Ending Date";
       }
-      else{
-        if(blockStart > blockEnd){
-        startError.innerHTML = "Starting date cannot be greater than Ending Date";}
-        if(dayDifference > 7){
-          endError.innerHtml = "Select dates within a range of 7 days";
-        }
+      if (dayDifference > 7) {
+        endError.innerHtml = "Select dates within a range of 7 days";
       }
+    }
+  } else {
+    if (blockStart == "") {
+      startError.innerHTML = "Date cannot be empty";
+    }
+    if (blockEnd == "") {
+      endError.innerHTML = "Date Cannot be empty";
+    }
   }
-  else{
-    if(blockStart == "")
-    {startError.innerHTML = "Date cannot be empty";}
-    if(blockEnd == "")
-    {endError.innerHTML = "Date Cannot be empty";}
-  }
- 
 }
 
-function getVisitData(dateFrom, dateTo){
+function getVisitData(dateFrom, dateTo) {
   var report;
   var reportdata;
   var data_array = [];
@@ -137,56 +129,46 @@ function getVisitData(dateFrom, dateTo){
     })
     .then(function (data) {
       report = data;
-      if(dateFrom && dateTo){
+      if (dateFrom && dateTo) {
         reportdata = report.filter(function (response) {
-          return (response.req_date > dateFrom && response.req_date < dateTo);
+          return response.req_date > dateFrom && response.req_date < dateTo;
         });
-      }
-      else{
+      } else {
         reportdata = report;
       }
       var dataMap = transformToMap(reportdata);
-      console.log("data", dataMap);
-      
-      
-     data_array = [...dataMap.entries()].sort((a, b) =>
+      data_array = [...dataMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
-      );  
-      
+      );
       visitChart(dateFrom, dateTo, data_array);
     });
-    
-    
 }
 
 function visitChart(dateFrom, dateTo, dataArray) {
-
   var report;
   var reportData;
   var top_visited_hours;
   var top_visited_array = [];
   var array_hours = [];
-  var jsonData = fetch("reportdata.json").then(function (resp){
-    return resp.json();
-  }).then(function (data){
-    report = data;
-    if(dateFrom && dateTo){
-      reportData = report.filter(function (response){
-        return (response.req_date > dateFrom && response.req_date < dateTo);
-      })
-    }
-    else{
-      reportData = report;
-    }
-    top_visited_hours = hoursVisited(reportData);
-    top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+  var jsonData = fetch("reportdata.json")
+    .then(function (resp) {
+      return resp.json();
+    })
+    .then(function (data) {
+      report = data;
+      if (dateFrom && dateTo) {
+        reportData = report.filter(function (response) {
+          return response.req_date > dateFrom && response.req_date < dateTo;
+        });
+      } else {
+        reportData = report;
+      }
+      top_visited_hours = hoursVisited(reportData);
+      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
- 
-  
-  var topFivedata = dataArray.slice(0,5);
-  
-  
+
+      var topFivedata = dataArray.slice(0, 5);
 
       for (i = 0; i < topFivedata.length; i++) {
         for (j = 0; j < top_visited_array.length; j++) {
@@ -197,7 +179,6 @@ function visitChart(dateFrom, dateTo, dataArray) {
       }
 
       var data = new google.visualization.DataTable();
-      
 
       data.addColumn("string", "Domain");
       data.addColumn("number", "visits");
@@ -224,7 +205,7 @@ function visitChart(dateFrom, dateTo, dataArray) {
       dvtable.innerHTML = "";
       dvtable.appendChild(table);
 
-       var options = {
+      var options = {
         title: "Most visited sites : ",
         pieHole: 0.4,
         legend: {
@@ -238,66 +219,62 @@ function visitChart(dateFrom, dateTo, dataArray) {
         document.getElementById("donutchart")
       );
       chart.draw(data, options);
-      });
+    });
 }
 
-function getBlockData(dateFrom, dateTo){
-
- var blocked_array = [];
- var report;
- var reportdata;
+function getBlockData(dateFrom, dateTo) {
+  var blocked_array = [];
+  var report;
+  var reportdata;
 
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
-    }).then(function (data) {
+    })
+    .then(function (data) {
       report = data;
-      if(dateFrom && dateTo){
+      if (dateFrom && dateTo) {
         reportdata = report.filter(function (response) {
-          return (response.req_date > dateFrom && response.req_date < dateTo);
+          return response.req_date > dateFrom && response.req_date < dateTo;
         });
-      }
-      else{
+      } else {
         reportdata = report;
       }
 
-      var blockedMap= blockedSiteMap(reportdata);
+      var blockedMap = blockedSiteMap(reportdata);
 
       blocked_array = [...blockedMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
-      blockedChart(dateFrom , dateTo, blocked_array);
+      blockedChart(dateFrom, dateTo, blocked_array);
     });
-    
 }
 
-function blockedChart(dateFrom, dateTo, blockedArray){
+function blockedChart(dateFrom, dateTo, blockedArray) {
   var report;
   var reportData;
   var top_visited_hours;
   var top_visited_array = [];
   var array_block_hours = [];
-  var jsonData = fetch("reportdata.json").then(function (resp){
-    return resp.json();
-  }).then(function (data){
-    report = data;
-    if(dateFrom && dateTo){
-      reportData = report.filter(function (response){
-        return (response.req_date > dateFrom && response.req_date < dateTo);
-      })
-    }
-    else{
-      reportData = report;
-    }
-    top_visited_hours = hoursVisited(reportData);
-    top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
+  var jsonData = fetch("reportdata.json")
+    .then(function (resp) {
+      return resp.json();
+    })
+    .then(function (data) {
+      report = data;
+      if (dateFrom && dateTo) {
+        reportData = report.filter(function (response) {
+          return response.req_date > dateFrom && response.req_date < dateTo;
+        });
+      } else {
+        reportData = report;
+      }
+      top_visited_hours = hoursVisited(reportData);
+      top_visited_array = [...top_visited_hours.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
-        );
-  
+      );
+
       var topblockedsite = blockedArray.slice(0, 5);
-      
-      
-      
 
       for (i = 0; i < topblockedsite.length; i++) {
         for (j = 0; j < top_visited_array.length; j++) {
@@ -348,7 +325,7 @@ function blockedChart(dateFrom, dateTo, blockedArray){
         document.getElementById("donutchart2")
       );
       chart.draw(data2, options2);
-  });
+    });
 }
 
 // Instantiate and draw our chart, passing in some options
