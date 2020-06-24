@@ -1,6 +1,6 @@
 google.charts.load("current", { packages: ["corechart"] });
-google.charts.setOnLoadCallback(visitChart);
-google.charts.setOnLoadCallback(blockedChart);
+google.charts.setOnLoadCallback(getVisitData);
+google.charts.setOnLoadCallback(getBlockData);
 
 var startDate = new Date();
 var endDate = new Date();
@@ -20,15 +20,15 @@ function getVisitPeriod() {
   } else if (dateFilter == "thisWeek") {
     startDate = date - 7;
     endDate = date;
-    visitChart(startDate, endDate);
+    getVisitData(startDate, endDate);
     
   } else if (dateFilter == "thisMonth") {
     startDate = date - 30;
     endDate = date;
-    visitChart(startDate, endDate);
+    getVisitData(startDate, endDate);
   } else {
     dateDiv.style.display = "none";
-    visitChart(0, 0);
+    getVisitData(0, 0);
   }
   
 }
@@ -43,14 +43,14 @@ function getBlockPeriod() {
   } else if (dateFilter == "thisWeek") {
     startDate = date - 7;
     endDate = date;
-    blockedChart(startDate, endDate);
+    getBlockData(startDate, endDate);
   } else if (dateFilter == "thisMonth") {
     startDate = date - 30;
     endDate = date;
-    blockedChart(startDate, endDate);
+    getBlockData(startDate, endDate);
   } else {
     dateDiv.style.display = "none";
-    blockedChart(0, 0);
+    getBlockData(0, 0);
   }
  
 }
@@ -58,7 +58,7 @@ function getBlockPeriod() {
 function getVisitDate() {
   var date = Date.now();
   let visitStart = this.document.getElementById("startDate").value;
-  let visitEnd = this.document.getElementById("todate1").value;
+  let visitEnd = this.document.getElementById("endDate").value;
   let startError = this.document.getElementById("startError");
   let endError = this.document.getElementById("endError");
   var fromDate = new Date(visitStart);
@@ -70,7 +70,7 @@ function getVisitDate() {
     if ((visitStart < visitEnd) && (dayDifference < 8)) {
        startDate = visitStart;
         endDate = visitEnd;
-        visitChart(startDate, endDate);
+        getVisitData(startDate, endDate);
       
     }
     else{
@@ -114,7 +114,7 @@ function getBlockDate() {
       
         startDate = blockStart;
         endDate = blockEnd;
-        blockedChart(startDate, endDate);
+        getBlockData(startDate, endDate);
       }
       else{
         if(blockStart > blockEnd){
@@ -144,6 +144,7 @@ function getVisitData(dateFrom, dateTo){
   var report;
   var reportdata;
   var data_array = [];
+  var newdata;
   var jsonData = fetch("reportdata.json")
     .then(function (resp) {
       return resp.json();
@@ -165,19 +166,20 @@ function getVisitData(dateFrom, dateTo){
      data_array = [...dataMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );  
-
       
+      visitChart(dateFrom, dateTo, data_array);
     });
-    return data_array;
+    
+    
 }
 
-function visitChart(dateFrom, dateTo) {
+function visitChart(dateFrom, dateTo, dataArray) {
 
   var report;
   var reportData;
   var top_visited_hours;
-  var top_visited_array;
-  var array_hours;
+  var top_visited_array = [];
+  var array_hours = [];
   var jsonData = fetch("reportdata.json").then(function (resp){
     return resp.json();
   }).then(function (data){
@@ -195,8 +197,8 @@ function visitChart(dateFrom, dateTo) {
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
  
-  var visit_array = getVisitData(dateFrom, dateTo);
-  var topFivedata = visit_array.slice(0,5);
+  
+  var topFivedata = dataArray.slice(0,5);
   
   
 
@@ -278,17 +280,17 @@ function getBlockData(dateFrom, dateTo){
       blocked_array = [...blockedMap.entries()].sort((a, b) =>
         Number(a[1]) < Number(b[1]) ? 0 : -1
       );
-      
+      blockedChart(dateFrom , dateTo, blocked_array);
     });
-    return blocked_array;
+    
 }
 
-function blockedChart(dateFrom, dateTo){
+function blockedChart(dateFrom, dateTo, blockedArray){
   var report;
   var reportData;
   var top_visited_hours;
-  var top_visited_array;
-  var array_block_hours;
+  var top_visited_array = [];
+  var array_block_hours = [];
   var jsonData = fetch("reportdata.json").then(function (resp){
     return resp.json();
   }).then(function (data){
@@ -306,8 +308,6 @@ function blockedChart(dateFrom, dateTo){
         Number(a[1]) < Number(b[1]) ? 0 : -1
         );
   
-
-      var blockedArray = getBlockData(dateFrom, dateTo);
       var topblockedsite = blockedArray.slice(0, 5);
       
       
